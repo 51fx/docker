@@ -52,7 +52,7 @@ RUN tar xzf /tmp/nginx-$NGINX_VERSION.tar.gz -C /tmp && cd /tmp/nginx-$NGINX_VER
 		--add-module=/tmp/nginx_upstream_check_module-master/ \
 	&& make && make install
 
-RUN ln -s /usr/local/nginx/sbin/* /usr/local/sbin/ 
+RUN ln -s /usr/local/nginx/sbin/* /usr/local/sbin/ && rm -rf /tmp/nginx*
 
 EXPOSE 80 443
 
