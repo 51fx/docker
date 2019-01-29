@@ -16,7 +16,7 @@ RUN curl -fSL https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz -o nginx-$N
 	&& curl -fSL https://github.com/yaoweibin/nginx_upstream_check_module/archive/v0.3.0.zip -o nginx_upstream_check_module.zip \
 	&& unzip nginx-upsync-module.zip && unzip nginx_upstream_check_module.zip
 
-RUN tar xzf nginx-$NGINX_VERSION.tar.gz && cd nginx-$NGINX_VERSION && patch -p1 < ../nginx_http_upstream_check_module/check_1.14.0+.patch \
+RUN tar xzf nginx-$NGINX_VERSION.tar.gz && cd nginx-$NGINX_VERSION && patch -p1 < ../nginx_upstream_check_module-master/check_1.14.0+.patch \
 	&& ./configure \
 		--prefix=/usr/local/nginx \
 		--user=nginx \
@@ -46,8 +46,8 @@ RUN tar xzf nginx-$NGINX_VERSION.tar.gz && cd nginx-$NGINX_VERSION && patch -p1 
 		--with-compat \
 		--with-file-aio \
 		--with-http_v2_module \
-		--add-module=../nginx-upsync-module/
-		--add-module=../nginx_http_upstream_check_module/
+		--add-module=../nginx-upsync-module-2.1.0/ \
+		--add-module=../nginx_upstream_check_module-master/ \
 	&& make && make install
 
 RUN ln -s /usr/local/nginx/sbin/* /usr/local/sbin/ && rm -rf ./nginx*
