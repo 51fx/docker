@@ -7,13 +7,17 @@ ENV NGINX_VERSION 1.14.0
 RUN rm -rf /etc/yum.repos.d/* \
 	&& curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo \
 	&& yum clean all && yum makecache \
-	&& yum install iputils vim zlib-devel pcre-devel make gcc libc-devel openssl openssl-devel curl perl-devel geoip-devel gd-devel libxslt-devel gnupg linux-headers -y 
+	&& yum install iputils vim zlib-devel pcre-devel make gcc libc-devel openssl openssl-devel curl perl-devel geoip-devel gd-devel libxslt-devel gnupg linux-headers zip unzip -y 
 
 RUN useradd -d /var/www/ -c "Nginx Server User" -s /sbin/nologin nginx 
 
-RUN curl -fSL https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz -o nginx-$NGINX_VERSION.tar.gz
+RUN curl -fSL https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz -o nginx-$NGINX_VERSION.tar.gz \
+	&& curl -fSL https://github.com/weibocom/nginx-upsync-module/archive/v2.1.0.zip -o nginx-upsync-module.zip \
+	&& curl -fSL https://github.com/yaoweibin/nginx_upstream_check_module/archive/v0.3.0.zip -o nginx_upstream_check_module.zip \
+	&& unzip nginx-upsync-module.zip && unzip nginx_upstream_check_module.zip
 
-RUN tar xzf nginx-$NGINX_VERSION.tar.gz && cd nginx-$NGINX_VERSION && ./configure \
+RUN tar xzf nginx-$NGINX_VERSION.tar.gz && cd nginx-$NGINX_VERSION && patch -p1 < ../nginx_http_upstream_check_module/check_1.14.0+.patch \
+	&& ./configure \
 		--prefix=/usr/local/nginx \
 		--user=nginx \
 		--group=nginx \
@@ -42,6 +46,8 @@ RUN tar xzf nginx-$NGINX_VERSION.tar.gz && cd nginx-$NGINX_VERSION && ./configur
 		--with-compat \
 		--with-file-aio \
 		--with-http_v2_module \
+		--add-module=../nginx-upsync-module/
+		--add-module=../nginx_http_upstream_check_module/
 	&& make && make install
 
 RUN ln -s /usr/local/nginx/sbin/* /usr/local/sbin/ && rm -rf ./nginx*
