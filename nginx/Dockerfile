@@ -7,7 +7,7 @@ ENV NGINX_VERSION 1.12.2
 RUN rm -rf /etc/yum.repos.d/* \
 	&& curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo \
 	&& yum clean all && yum makecache \
-	&& yum install iputils vim zlib-devel pcre-devel make gcc libc-devel openssl openssl-devel curl perl-devel geoip-devel gd-devel libxslt-devel gnupg linux-headers zip unzip -y 
+	&& yum install iputils vim zlib-devel pcre-devel make gcc libc-devel openssl openssl-devel curl perl-devel geoip-devel gd-devel libxslt-devel gnupg linux-headers zip unzip patch -y 
 
 RUN useradd -d /var/www/ -c "Nginx Server User" -s /sbin/nologin nginx 
 
