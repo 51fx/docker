@@ -2,7 +2,7 @@ FROM centos:6.8
 
 MAINTAINER graham_liu <graham_liu@aliyun.com>
 
-ENV NGINX_VERSION 1.14.0
+ENV NGINX_VERSION 1.12.2
 
 RUN rm -rf /etc/yum.repos.d/* \
 	&& curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo \
@@ -11,12 +11,12 @@ RUN rm -rf /etc/yum.repos.d/* \
 
 RUN useradd -d /var/www/ -c "Nginx Server User" -s /sbin/nologin nginx 
 
-RUN curl -fSL https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz -o nginx-$NGINX_VERSION.tar.gz \
-	&& curl -fSL https://github.com/weibocom/nginx-upsync-module/archive/v2.1.0.zip -o nginx-upsync-module.zip \
-	&& curl -fSL https://github.com/yaoweibin/nginx_upstream_check_module/archive/v0.3.0.zip -o nginx_upstream_check_module.zip \
-	&& unzip nginx-upsync-module.zip && unzip nginx_upstream_check_module.zip
+RUN curl -fSL https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz -o /tmp/nginx-$NGINX_VERSION.tar.gz \
+	&& curl -fSL https://github.com/weibocom/nginx-upsync-module/archive/v2.1.0.zip -o /tmp/nginx-upsync-module.zip \
+	&& curl -fSL https://github.com/xiaokai-wang/nginx_upstream_check_module/archive/master.zip -o /tmp/nginx_upstream_check_module.zip \
+	&& unzip /tmp/nginx-upsync-module.zip -d /tmp && unzip /tmp/nginx_upstream_check_module.zip -d /tmp
 
-RUN tar xzf nginx-$NGINX_VERSION.tar.gz && cd nginx-$NGINX_VERSION && patch -p1 < ../nginx_upstream_check_module-master/check_1.14.0+.patch \
+RUN tar xzf /tmp/nginx-$NGINX_VERSION.tar.gz -C /tmp && cd /tmp/nginx-$NGINX_VERSION && patch -p1 < /tmp/nginx_upstream_check_module-master/check_1.12.1+.patch \
 	&& ./configure \
 		--prefix=/usr/local/nginx \
 		--user=nginx \
@@ -46,11 +46,11 @@ RUN tar xzf nginx-$NGINX_VERSION.tar.gz && cd nginx-$NGINX_VERSION && patch -p1 
 		--with-compat \
 		--with-file-aio \
 		--with-http_v2_module \
-		--add-module=../nginx-upsync-module-2.1.0/ \
-		--add-module=../nginx_upstream_check_module-master/ \
+		--add-module=/tmp/nginx-upsync-module-2.1.0/ \
+		--add-module=/tmp/nginx_upstream_check_module-master/ \
 	&& make && make install
 
-RUN ln -s /usr/local/nginx/sbin/* /usr/local/sbin/ && rm -rf ./nginx*
+RUN ln -s /usr/local/nginx/sbin/* /usr/local/sbin/ 
 
 EXPOSE 80 443
 
