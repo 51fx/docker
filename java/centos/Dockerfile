@@ -1,4 +1,4 @@
-FROM centos:6.8
+FROM centos:6.10
 
 MAINTAINER graham_liu <graham_liu@aliyun.com>
 
