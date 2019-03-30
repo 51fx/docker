@@ -35,7 +35,7 @@ RUN tar xzf /tmp/openresty-$OPENRESTY_VERSION.tar.gz -C /tmp && cd /tmp/openrest
 		--add-module=/tmp/nginx_upstream_check_module-master/ \
 	&& make && make install
 
-RUN ln -s /usr/local/openresty/nginx/sbin/* /usr/local/sbin/ && rm -rf /tmp/nginx* /tmp/openresty*
+RUN ln -s /usr/local/openresty/bin/openresty /usr/local/bin/ && rm -rf /tmp/nginx* /tmp/openresty*
 
 EXPOSE 80 443
 
